@@ -10,6 +10,7 @@ package org.ang.streaming.SpeedStreaming;
  * @author Administrator
  */
 
+import java.util.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Arrays;
@@ -32,6 +33,7 @@ public class SpeedStreamingPerrosParques{
   private static final Pattern SPACE = Pattern.compile(" ");
   
   public static void main(String[] args) {
+    args = new  String[]{"ec2-52-207-209-137.compute-1.amazonaws.com:9092","gps"};
     if (args.length < 2) {
       System.err.println("Usage: SpeedStreamingPerrosParques <brokers> <topics>\n" +
           "  <brokers> is a list of one or more Kafka brokers\n" +
@@ -47,7 +49,9 @@ public class SpeedStreamingPerrosParques{
     System.out.println("Checkpoint 2");
     
     // Create context with a 2 seconds batch interval
-    SparkConf sparkConf = new SparkConf().setAppName("SpeedStreamingPerrosParques");
+    //SparkConf sparkConf = new SparkConf().setAppName("SpeedStreamingPerrosParques").setMaster("spark://localhost:18080").set("spark.ui.port","18080");
+    SparkConf sparkConf = new SparkConf().setAppName("SpeedStreamingPerrosParques").setMaster("local[2]");
+    System.out.println("Checkpoint 2.1");
     JavaStreamingContext jssc = new JavaStreamingContext(sparkConf, Durations.seconds(2));
     
      System.out.println("Checkpoint 3");
@@ -56,11 +60,16 @@ public class SpeedStreamingPerrosParques{
     HashMap<String, String> kafkaParams = new HashMap<String, String>();
     kafkaParams.put("metadata.broker.list", brokers);
     
-     System.out.println("Checkpoint 4");
+    Map<String,Integer> kafkaParams2 = new HashMap<String, Integer>();
+    kafkaParams2.put(topics, 1);
+       
     
-    //JavaPairInputDStream<String, String> messages1 = KafkaUtils.createStream(jssc, topics, topics, map);
-     
-     
+    System.out.println("Checkpoint 4");
+    
+    //JavaPairInputDStream<String, String> messages1 = KafkaUtils.createStream(jssc, brokers, "", kafkaParams2);
+    
+    //System.out.println(messages1);
+    
     // Create direct kafka stream with brokers and topics
     
     JavaPairInputDStream<String, String> messages = KafkaUtils.createDirectStream(
