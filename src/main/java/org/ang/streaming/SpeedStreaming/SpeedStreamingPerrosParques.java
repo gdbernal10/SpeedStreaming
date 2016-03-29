@@ -20,6 +20,7 @@ import scala.Tuple2;
 import com.google.common.collect.Lists;
 import kafka.serializer.StringDecoder;
 
+
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.function.*;
 import org.apache.spark.streaming.api.java.*;
@@ -57,7 +58,11 @@ public class SpeedStreamingPerrosParques{
     
      System.out.println("Checkpoint 4");
     
+    //JavaPairInputDStream<String, String> messages1 = KafkaUtils.createStream(jssc, topics, topics, map);
+     
+     
     // Create direct kafka stream with brokers and topics
+    
     JavaPairInputDStream<String, String> messages = KafkaUtils.createDirectStream(
         jssc,
         String.class,
