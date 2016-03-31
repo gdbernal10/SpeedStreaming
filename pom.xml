@@ -54,7 +54,13 @@
             <groupId>com.sun.grizzly</groupId> 
             <artifactId>grizzly-servlet-webserver</artifactId> 
             <version>1.9.8</version> 
-        </dependency> 
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey.jersey-test-framework</groupId>
+            <artifactId>jersey-test-framework-grizzly2</artifactId>
+            <version>1.19.1</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
