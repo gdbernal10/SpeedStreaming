@@ -44,6 +44,17 @@
                 </exclusion> 
             </exclusions>
         </dependency>
+        <dependency> 
+            <groupId>com.sun.jersey.jersey-test-framework</groupId> 
+            <artifactId>jersey-test-framework-grizzly</artifactId> 
+            <version>1.9</version> 
+            <scope>test</scope> 
+        </dependency> 
+        <dependency> 
+            <groupId>com.sun.grizzly</groupId> 
+            <artifactId>grizzly-servlet-webserver</artifactId> 
+            <version>1.9.8</version> 
+        </dependency> 
     </dependencies>
     
 </project>
