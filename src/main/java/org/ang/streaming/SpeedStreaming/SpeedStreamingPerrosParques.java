@@ -20,6 +20,7 @@ import scala.Tuple2;
 
 import com.google.common.collect.Lists;
 import kafka.serializer.StringDecoder;
+import kafka.serializer.StringEncoder;
 
 
 import org.apache.spark.SparkConf;
@@ -33,7 +34,7 @@ public class SpeedStreamingPerrosParques{
   private static final Pattern SPACE = Pattern.compile(" ");
   
   public static void main(String[] args) {
-    args = new  String[]{"ec2-52-207-209-137.compute-1.amazonaws.com:9092","gps"};
+    args = new  String[]{"10.0.1.25:2181","gps"};
     if (args.length < 2) {
       System.err.println("Usage: SpeedStreamingPerrosParques <brokers> <topics>\n" +
           "  <brokers> is a list of one or more Kafka brokers\n" +
@@ -69,6 +70,10 @@ public class SpeedStreamingPerrosParques{
     //JavaPairInputDStream<String, String> messages1 = KafkaUtils.createStream(jssc, brokers, "", kafkaParams2);
     
     //System.out.println(messages1);
+    
+    StringEncoder a = null;
+    
+    
     
     // Create direct kafka stream with brokers and topics
     
