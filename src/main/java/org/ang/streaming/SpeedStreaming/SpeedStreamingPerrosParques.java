@@ -34,7 +34,7 @@ public class SpeedStreamingPerrosParques{
   private static final Pattern SPACE = Pattern.compile(" ");
   
   public static void main(String[] args) {
-    args = new  String[]{"10.0.1.25:2181","gps"};
+    args = new  String[]{"10.0.1.25:9092","gps"};
     if (args.length < 2) {
       System.err.println("Usage: SpeedStreamingPerrosParques <brokers> <topics>\n" +
           "  <brokers> is a list of one or more Kafka brokers\n" +
