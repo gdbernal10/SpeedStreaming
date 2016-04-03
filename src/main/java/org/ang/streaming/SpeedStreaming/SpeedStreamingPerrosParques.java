@@ -51,13 +51,13 @@ public class SpeedStreamingPerrosParques {
     public static void main(String[] args) throws Exception {
         //args = new String[]{"10.0.1.25:9092", "gps"};
         if (args.length < 2) {
-            System.err.println("Usage: SpeedStreamingPerrosParques <brokers> <topics>\n"
-                    + "  <brokers> is a list of one or more Kafka brokers\n"
-                    + "  <topics> is a list of one or more kafka topics to consume from\n\n");
+            System.err.println("Usage: SpeedStreamingPerrosParques <broker> <topic>\n"
+                    + "  <broker> is a Kafka broker\n"
+                    + "  <topics> is a kafka topic to consume from\n\n");
             System.exit(1);
         }
 
-        //saveToMongo("{\"id\":\"1\",\"type\":\"collar1\",\"pet_name\":\"Lazzy2\",\"lat\":\"100\",\"log\":\"67\",\"otro\":\"test\"}");
+        //saveToMongo("{\"id\":\"1\",\"type\":\"collar1\",\"pet_name\":\"Lazzy2\",\"lat\":\"100\",\"log\":\"67\",\"otro\":\"test\",\"medical\":\"injured\"}");
 
         System.out.println("Checkpoint 1");
         //StreamingExamples.setStreamingLogLevels();
@@ -128,30 +128,18 @@ public class SpeedStreamingPerrosParques {
             toFile("Method: saveToMongo: Trace: " + "JSONArray: " + array.toString(), LOG_PATH);
             toFile("Method: saveToMongo: Trace: " + "JSONObject: " + array.get(0).toString(), LOG_PATH);
             JSONObject data = (JSONObject) array.get(0);
-            //JSONObject data = (JSONObject)JsonDecode(jsonData).get(0);
             toFile("Method: saveToMongo: Trace: " + "Data: " + data.toJSONString(), LOG_PATH);
             Document key = new Document("id_collar", data.get("id"));
+            Document doc = new Document();
+            doc.putAll(data);
+            doc.append("id_collar", data.get("id"))
+                    .append("createdAt", System.currentTimeMillis()).remove("id");
             toFile("Method: saveToMongo: Trace: " + "key: " + key.toJson(), LOG_PATH);
             toFile("Method: saveToMongo: Trace: " + "Data Exists: " + db.getCollection("collares_perros").find(key).first(), SpeedStreamingPerrosParques.LOG_PATH);
             if (db.getCollection("collares_perros").find(key).first() == null) {
-                db.getCollection("collares_perros").insertOne(key
-                        .append("type", data.get("type"))
-                        .append("pet_name", data.get("pet_name"))
-                        .append("lat", data.get("lat"))
-                        .append("log", data.get("log"))
-                        .append("createdAt", System.currentTimeMillis())
-                );
+                db.getCollection("collares_perros").insertOne(doc);
             } else {
-                db.getCollection("collares_perros").updateOne(
-                        key,
-                        new Document("$set",
-                                new Document("type", data.get("type"))
-                                .append("pet_name", data.get("pet_name"))
-                                .append("lat", data.get("lat"))
-                                .append("log", data.get("log"))
-                                .append("createdAt", System.currentTimeMillis())
-                        )
-                );
+                db.getCollection("collares_perros").updateOne(key,new Document("$set",doc));
             }
             toFile("Method: saveToMongo: Trace: " + "** END EXEC ** ", LOG_PATH);
         } catch (Exception e) {
@@ -168,13 +156,9 @@ public class SpeedStreamingPerrosParques {
             toFile("Method: JsonDecode: Trace: " + "Input:  jsonData - Final: " + jsonData, LOG_PATH);
             Object obj = parser.parse(jsonData);
             JSONArray array = (JSONArray) obj;
-            //JSONObject obj2 = (JSONObject) array.get(1);
             toFile("Method: JsonDecode: Trace: " + "** END EXEC ** ", LOG_PATH);
             return array;
         } catch (Exception pe) {
-
-            //System.out.println("position: " + pe.getPosition());
-            //System.out.println(pe);
             toFile("Method: JsonDecode, Exception: " + pe.getMessage(), LOG_PATH);
             return null;
         }
