@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.text.SimpleDateFormat;
 import kafka.serializer.StringDecoder;
 
 import org.apache.spark.SparkConf;
@@ -46,6 +47,10 @@ public class SpeedStreamingPerrosParques {
 
     private static final Pattern SPACE = Pattern.compile(" ");
     public static final String LOG_PATH = "/home/vagrant/SpeedStreaming/logSpeedStreaming.txt";
+    public static final String LOG_PATH2 = System.getenv("LOG_PATH_SL");
+    public static final String MONGODB = "mongodb://10.1.1.110:27017"; 
+    public static final String MONGODB2 =  System.getenv("MONGODB_SL"); 
+    
     //public static final String LOG_PATH = "C:\\Users\\Administrator\\Dropbox\\Andes\\4208_Arquitectuta_NG\\taller5\\MaquinaIoT\\repositorio\\SpeedStreaming\\logSpeedStreaming.txt";
 
     public static void main(String[] args) throws Exception {
@@ -56,7 +61,8 @@ public class SpeedStreamingPerrosParques {
                     + "  <topics> is a kafka topic to consume from\n\n");
             System.exit(1);
         }
-
+        toFile(System.getenv("LOG_PATH_SL"),LOG_PATH);
+        toFile(System.getenv("MONGODB_SL"),LOG_PATH);
         //saveToMongo("{\"id\":\"1\",\"type\":\"collar1\",\"pet_name\":\"Lazzy2\",\"lat\":\"100\",\"log\":\"67\",\"otro\":\"test\",\"medical\":\"injured\"}");
 
         System.out.println("Checkpoint 1");
@@ -107,8 +113,11 @@ public class SpeedStreamingPerrosParques {
         jssc.awaitTermination();
     }
 
-    public static void toFile(String data, String fileNameFullPath) throws IOException {
-        List<String> lines = Arrays.asList(data);
+    public static void toFile(String data, String fileNameFullPath) throws IOException {      
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");		
+	Calendar calendar = Calendar.getInstance();	
+	//System.out.println("Date : " + sdf.format(calendar.getTime()));        
+        List<String> lines = Arrays.asList(sdf.format(calendar.getTime()) + ": " + data);
         Path file = Paths.get(fileNameFullPath);
         if (file.toFile().exists()) {
             Files.write(file, lines, Charset.forName("UTF-8"), StandardOpenOption.APPEND);
@@ -120,7 +129,8 @@ public class SpeedStreamingPerrosParques {
     private static void saveToMongo(String jsonData) throws Exception {
         try {
             toFile("Method: saveToMongo: Trace: " + "** BEGIN EXEC ** ", LOG_PATH);
-            MongoClient mongoClient = new MongoClient(new MongoClientURI("mongodb://10.1.1.110:27017"));
+            //MongoClient mongoClient = new MongoClient(new MongoClientURI("mongodb://10.1.1.110:27017"));
+            MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGODB));
             MongoDatabase db = mongoClient.getDatabase("kml_db");
             toFile("Method: saveToMongo: Trace: " + "db: " + db.getName(), LOG_PATH);
             toFile("Method: saveToMongo: Trace: " + "db: " + db.listCollections(), LOG_PATH);
