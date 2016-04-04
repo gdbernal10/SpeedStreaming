@@ -145,11 +145,11 @@ public class SpeedStreamingPerrosParques {
             doc.append("id_collar", data.get("id"))
                     .append("createdAt", System.currentTimeMillis()).remove("id");
             toFile("Method: saveToMongo: Trace: " + "key: " + key.toJson(), LOG_PATH);
-            toFile("Method: saveToMongo: Trace: " + "Data Exists: " + db.getCollection("collares_perros").find(key).first(), SpeedStreamingPerrosParques.LOG_PATH);
-            if (db.getCollection("collares_perros").find(key).first() == null) {
-                db.getCollection("collares_perros").insertOne(doc);
+            toFile("Method: saveToMongo: Trace: " + "Data Exists: " + db.getCollection("perros_loc").find(key).first(), SpeedStreamingPerrosParques.LOG_PATH);
+            if (db.getCollection("perros_loc").find(key).first() == null) {
+                db.getCollection("perros_loc").insertOne(doc);
             } else {
-                db.getCollection("collares_perros").updateOne(key,new Document("$set",doc));
+                db.getCollection("perros_loc").updateOne(key,new Document("$set",doc));
             }
             toFile("Method: saveToMongo: Trace: " + "** END EXEC ** ", LOG_PATH);
         } catch (Exception e) {
