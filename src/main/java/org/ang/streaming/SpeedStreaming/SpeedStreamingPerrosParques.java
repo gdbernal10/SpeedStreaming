@@ -103,7 +103,7 @@ public class SpeedStreamingPerrosParques {
         JavaDStream<String> lines = messages.map(new org.apache.spark.api.java.function.Function<Tuple2<String, String>, String>() {
             @Override
             public String call(Tuple2<String, String> tuple2) throws Exception {
-                toFile("Method: Main: Trace: " + "Line MQ: " + tuple2._2, LOG_PATH);
+                //toFile("Method: Main: Trace: " + "Line MQ: " + tuple2._2, LOG_PATH);
                 saveToMongo(tuple2._2);
                 return tuple2._2();
             }
@@ -128,30 +128,31 @@ public class SpeedStreamingPerrosParques {
 
     private static void saveToMongo(String jsonData) throws Exception {
         try {
-            toFile("Method: saveToMongo: Trace: " + "** BEGIN EXEC ** ", LOG_PATH);
+            //toFile("Method: saveToMongo: Trace: " + "** BEGIN EXEC ** ", LOG_PATH);
             //MongoClient mongoClient = new MongoClient(new MongoClientURI("mongodb://10.1.1.110:27017"));
             MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGODB));
             MongoDatabase db = mongoClient.getDatabase("kml_db");
-            toFile("Method: saveToMongo: Trace: " + "db: " + db.getName(), LOG_PATH);
-            toFile("Method: saveToMongo: Trace: " + "db: " + db.listCollections(), LOG_PATH);
+            //toFile("Method: saveToMongo: Trace: " + "db: " + db.getName(), LOG_PATH);
+            //toFile("Method: saveToMongo: Trace: " + "db: " + db.listCollections(), LOG_PATH);
             JSONArray array = JsonDecode(jsonData);
-            toFile("Method: saveToMongo: Trace: " + "JSONArray: " + array.toString(), LOG_PATH);
-            toFile("Method: saveToMongo: Trace: " + "JSONObject: " + array.get(0).toString(), LOG_PATH);
+            //toFile("Method: saveToMongo: Trace: " + "JSONArray: " + array.toString(), LOG_PATH);
+            //toFile("Method: saveToMongo: Trace: " + "JSONObject: " + array.get(0).toString(), LOG_PATH);
             JSONObject data = (JSONObject) array.get(0);
-            toFile("Method: saveToMongo: Trace: " + "Data: " + data.toJSONString(), LOG_PATH);
+            //toFile("Method: saveToMongo: Trace: " + "Data: " + data.toJSONString(), LOG_PATH);
             Document key = new Document("id_collar", data.get("id"));
             Document doc = new Document();
             doc.putAll(data);
             doc.append("id_collar", data.get("id"))
-                    .append("createdAt", System.currentTimeMillis()).remove("id");
-            toFile("Method: saveToMongo: Trace: " + "key: " + key.toJson(), LOG_PATH);
-            toFile("Method: saveToMongo: Trace: " + "Data Exists: " + db.getCollection("perros_loc").find(key).first(), SpeedStreamingPerrosParques.LOG_PATH);
+                    .append("createdAt", System.currentTimeMillis());
+                    //.append("createdAt", System.currentTimeMillis()).remove("id");
+            //toFile("Method: saveToMongo: Trace: " + "key: " + key.toJson(), LOG_PATH);
+            //toFile("Method: saveToMongo: Trace: " + "Data Exists: " + db.getCollection("perros_loc").find(key).first(), SpeedStreamingPerrosParques.LOG_PATH);
             if (db.getCollection("perros_loc").find(key).first() == null) {
                 db.getCollection("perros_loc").insertOne(doc);
             } else {
                 db.getCollection("perros_loc").updateOne(key,new Document("$set",doc));
             }
-            toFile("Method: saveToMongo: Trace: " + "** END EXEC ** ", LOG_PATH);
+            //toFile("Method: saveToMongo: Trace: " + "** END EXEC ** ", LOG_PATH);
         } catch (Exception e) {
             toFile("Method: saveToMongo, Exception: " + e.getMessage(), LOG_PATH);
         }
@@ -159,14 +160,14 @@ public class SpeedStreamingPerrosParques {
 
     public static JSONArray JsonDecode(String jsonData) throws IOException {
         try {
-            toFile("Method: JsonDecode: Trace: " + "** BEGIN EXEC ** ", LOG_PATH);
+            //toFile("Method: JsonDecode: Trace: " + "** BEGIN EXEC ** ", LOG_PATH);
             JSONParser parser = new JSONParser();
-            toFile("Method: JsonDecode: Trace: " + "Input:  jsonData: " + jsonData, LOG_PATH);
+            //toFile("Method: JsonDecode: Trace: " + "Input:  jsonData: " + jsonData, LOG_PATH);
             jsonData = jsonData.indexOf("[") == 1 ? jsonData : "[" + jsonData + "]";
-            toFile("Method: JsonDecode: Trace: " + "Input:  jsonData - Final: " + jsonData, LOG_PATH);
+            //toFile("Method: JsonDecode: Trace: " + "Input:  jsonData - Final: " + jsonData, LOG_PATH);
             Object obj = parser.parse(jsonData);
             JSONArray array = (JSONArray) obj;
-            toFile("Method: JsonDecode: Trace: " + "** END EXEC ** ", LOG_PATH);
+            //toFile("Method: JsonDecode: Trace: " + "** END EXEC ** ", LOG_PATH);
             return array;
         } catch (Exception pe) {
             toFile("Method: JsonDecode, Exception: " + pe.getMessage(), LOG_PATH);
